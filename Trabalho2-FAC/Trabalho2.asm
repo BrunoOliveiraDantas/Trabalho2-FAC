@@ -1,6 +1,15 @@
-.data
+.globl main
 
+.data
+	NaoPrimo: .asciiz "O modulo nao eh primo."
+	Resultado: .asciiz  "O inverso multiplicativo eh "
 .text
+
+main:
+
+	li $s0, 1  # Incementador i
+	li $s1, 0  #incrementador p	
+	
 
 le_inteiro:
 
@@ -16,8 +25,21 @@ le_inteiro:
 
 eh_primo:
 
+	
+	
+	
 calc_inverso:
 
 imprime_erro:
 
+	li $v0, 4
+	la $a0, NaoPrimo
+	syscall
+
 imprime_saida:
+	
+	li $v0, 4
+	la $a0, Resultado
+	syscall
+
+exit:
