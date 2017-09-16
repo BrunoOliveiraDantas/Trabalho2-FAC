@@ -9,7 +9,7 @@ main:
 
 	li $s0, 1  # Incementador i
 	li $s1, 0  #incrementador p	
-	
+	li $t5, 0  # inicializando o resto
 
 le_inteiro:
 
@@ -23,23 +23,54 @@ le_inteiro:
 	
 	move $t1, $v0 ## movendo o numero para o registrador $t1, agora $t1 é o Segundo Numero
 
-eh_primo:
 
+eh_primo:
 	
+	add $t3, $t0, 1 # total +1, Será o ponto de parada
 	
+	slt $t4, $s0, $t0  # Compara dois valores o i= s0 e o 1ºNumero= t0 , se os valores forem iguais ele manda 1 para o $t4
+	beq $s0, $t3, decidir  #Compara os valores  de i e o total, caso forem iguais, ele sai do loop
 	
+	### Calculo do resto de uma divisao -> resto = dividendo - (divisor * quociente)
+	
+	div $t0, $s0, #Divisão do 1ºNumero (dividendo) pelo i (divisor)
+	mflo $s3	#guarda o resultado (quociente) da divisão em um registrador de baixo nivel
+	
+	mult $s0, $s3	#Multiplica o 1ºNumero pelo quociente
+	mfhi $s4	#guarda o resultado em um registrador de alto nivel
+	 
+	sub $t6, $t0, $s4  #subtrai o 1ºNumero pelo resultado da multiplicação e armazena no $t6 que é o resto
+	
+	 ### FIm do calculo do resto 
+	
+	add $s0, $s0, 1 #Incrementando o i
+	
+	bnez $t6, eh_primo  #Se o resto for difetente de 0, ele volta pra o inicio
+	add $s1, $s1, 1  #Incrementando o p, que servira para sabermos se é primo ou não
+	
+	j eh_primo  # retorna para o eh_primo
+
+decidir:
+
+	beq $s1, 2, calc_inverso  # Se  "p" for igual a 2 ele é primo, pois os numeros primos são multiplos de apenas 2 numeros
+	bne $s1, 2, imprime_erro  # Se "p" for diferente de 2 ele não é primo, pois possui mais de 2 multiplos 
+		
 calc_inverso:
+	
+	j exit
 
 imprime_erro:
 
-	li $v0, 4
-	la $a0, NaoPrimo
-	syscall
-
+	li $v0, 4 	#comando para o syscall printar uma string
+	la $a0, NaoPrimo  #Carrega a Label NaoPrimo
+	syscall  # Chamada de sistema
+	j exit  #Termina o programa
+	
 imprime_saida:
 	
-	li $v0, 4
-	la $a0, Resultado
-	syscall
-
+	li $v0, 4  	##comando para o syscall printar uma string
+	la $a0, Resultado # Chamada de sistema
+	syscall		# Chamada de sistema
+	j exit  #Termina o programa
+	
 exit:
